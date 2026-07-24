@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Elky API - Game</title>
@@ -7,8 +9,6 @@
             touch-action: none;
             width: 100%;
             height: 100%;
-        }
-        body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
@@ -21,7 +21,7 @@
             width: 100%;
             height: 100%;
         }
-         .game-container {
+        .game-container {
             user-select: none;
             position: absolute;
             width: 100%;
@@ -67,11 +67,24 @@
             border-radius: 10px;
             width: 200px;
             margin-bottom: 24px;
-
             box-shadow: 0 1px 1px hsl(0deg 0% 0% / .075), 0 2px 2px hsl(0deg 0% 0% / .075), 0 4px 4px hsl(0deg 0% 0% / .075), 0 8px 8px hsl(0deg 0% 0% / .075), 0 16px 16px hsl(0deg 0% 0% / .075);
         }
+        /* वर्टिकल मोड के लिए अतिरिक्त स्टाइल */
+        @media (orientation: portrait) {
+            .game-container {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        @media (orientation: landscape) {
+            .game-container {
+                width: 100%;
+                height: 100%;
+            }
+        }
     </style>
-<script src="https://g.elky.net/libs/elky-api/1.0.1/elky-api.min.js"></script></head>
+    <script src="https://g.elky.net/libs/elky-api/1.0.1/elky-api.min.js"></script>
+</head>
 <body>
     <script>
         function addPreload(href, as, type, crossorigin = false) {
@@ -85,7 +98,7 @@
             document.head.appendChild(link);
         }
         const urlParams = new URLSearchParams(window.location.search);
-        addPreload(urlParams.get('preload-wasm') /*|| '/ruffle/ruffle_web_bg.wasm'*/, "fetch", "application/wasm", true);
+        addPreload(urlParams.get('preload-wasm') || '/ruffle/ruffle_web_bg.wasm', "fetch", "application/wasm", true);
         addPreload(urlParams.get('preload-game'), "fetch", "", true);
 
         function loadScript(src) {
@@ -95,11 +108,15 @@
                 script.onload = resolve;
                 script.onerror = reject;
                 document.head.appendChild(script);
-           });
+            });
         }
     </script>
 
-    <div class="game-wrapper" id="gameWrapper"><div class="game-container" id="gameContainer"><iframe width="100%" height="100%" id="gameContainerFrame" src="https://temple-run-2.gcdn.dev/index.html?elky-locale=en-US" frameborder="0" scrolling="no" allow="autoplay; camera; focus-without-user-activation *; monetization; gamepad; keyboard-map *; xr-spatial-tracking; clipboard-write; web-share; accelerometer; magnetometer; gyroscope; display-capture"></iframe></div></div>
+    <div class="game-wrapper" id="gameWrapper">
+        <div class="game-container" id="gameContainer">
+            <iframe width="100%" height="100%" id="gameContainerFrame" src="https://temple-run-2.gcdn.dev/index.html?elky-locale=en-US" frameborder="0" scrolling="no" allow="autoplay; camera; focus-without-user-activation *; monetization; gamepad; keyboard-map *; xr-spatial-tracking; clipboard-write; web-share; accelerometer; magnetometer; gyroscope; display-capture"></iframe>
+        </div>
+    </div>
     <div class="game-preloader" id="gamePreloader" style="display: none;">
         <img class="game-image" src="https://i.elky.com/autogen/games/1/1obxsydmhca1m486/image0-664x664.avif" alt="Game Preloader">
         <div class="game-preloader-filter"></div>
@@ -108,13 +125,13 @@
                 <img class="game-image" src="https://i.elky.com/autogen/games/1/1obxsydmhca1m486/image0-664x664.avif" alt="Game Preloader">
                 <svg width="72" height="16" viewBox="0 0 72 16" role="img" aria-label="Loading">
                     <circle cx="8" cy="8" r="8" fill="currentColor">
-                    <animate attributeName="opacity" values="1;0.2;1" dur="1s" repeatCount="indefinite"></animate>
+                        <animate attributeName="opacity" values="1;0.2;1" dur="1s" repeatCount="indefinite"></animate>
                     </circle>
                     <circle cx="36" cy="8" r="8" fill="currentColor">
-                    <animate attributeName="opacity" values="1;0.2;1" dur="1s" begin=".15s" repeatCount="indefinite"></animate>
+                        <animate attributeName="opacity" values="1;0.2;1" dur="1s" begin=".15s" repeatCount="indefinite"></animate>
                     </circle>
                     <circle cx="64" cy="8" r="8" fill="currentColor">
-                    <animate attributeName="opacity" values="1;0.2;1" dur="1s" begin=".3s" repeatCount="indefinite"></animate>
+                        <animate attributeName="opacity" values="1;0.2;1" dur="1s" begin=".3s" repeatCount="indefinite"></animate>
                     </circle>
                 </svg>
             </div>
@@ -136,20 +153,22 @@
             let scaleY = containerWrapper.clientHeight / eparams.height;
             const minScale = Math.min(scaleX, scaleY);
 
-            if(eparams.scale === 'none') { // no scale - just upscale initial size
+            if(eparams.scale === 'none') {
                 containerFrame.style.transform = `translate(-50%, -50%) scale(${minScale})`;
                 containerFrame.style.width = `${100 / scaleX}%`;
                 containerFrame.style.height = `${100 / scaleY}%`;
-             } else if(eparams.scale === 'uniform') {
-                // only uniform scale - use scale, but crop area with initial ratio
+            } else if(eparams.scale === 'uniform') {
                 scaleX /= minScale;
                 scaleY /= minScale;
                 containerFrame.style.width = `${100 / scaleX}%`;
                 containerFrame.style.height = `${100 / scaleY}%`;
-             }
+            }
         }
 
-        function parseJSONsafely(json) { try { return JSON.parse(json); } catch (e) {} return null; }
+        function parseJSONsafely(json) { 
+            try { return JSON.parse(json); } 
+            catch (e) { return null; } 
+        }
 
         async function loadConfig(configStr, root) {
             let cfg = null;
@@ -181,7 +200,10 @@
             const config = await loadConfig(urlParams.get('config'), rootPath);
 
             const img = urlParams.get('image');
-            img && document.querySelectorAll('.game-image').forEach(el => { el.src = img; el.hidden = false; });
+            img && document.querySelectorAll('.game-image').forEach(el => { 
+                el.src = img; 
+                el.hidden = false; 
+            });
 
             if(embed === 'file') {
                 const ruffleSrc = config?.ruffle?.version || 'ruffle-elky-2025-12-12';
@@ -189,35 +211,35 @@
             }
             await loadScript('https://g.elky.net/libs/elky-api/1.0.1/elky-api.min.js', false);
 
+            // 🔥 यहाँ मुख्य बदलाव - वर्टिकल मोड के लिए width और height बदली गई है
             eparams = {
                 root: rootPath || '',
                 path: gamePath || '',
                 scale: scale || 'none',
-                width: init_width || '920',
-                height: init_height || '320',
+                width: init_width || '360',     // ← वर्टिकल के लिए चौड़ाई (पहले 920 था)
+                height: init_height || '640',   // ← वर्टिकल के लिए ऊँचाई (पहले 320 था)
                 embed: embed || 'file',
                 config: config || {}
             }
+            
             const containerWrapper = document.getElementById("gameWrapper");
             if (containerWrapper) {
                 const resizeObserver = new ResizeObserver(resizeContainer);
                 resizeObserver.observe(containerWrapper);
-                resizeContainer(); // Initial call to set the size correctly
+                resizeContainer();
             }
+            
             try {
                 console.log('Initializing Elky API...');
 
                 if(eparams.embed === 'file') {
-                    eparams.config.ruffle = eparams.config?.ruffle || {}; // fix ruffle
+                    eparams.config.ruffle = eparams.config?.ruffle || {};
                 }
                 eparams.config.root = eparams.root;
                 
-                // Initialize API with Ruffle, Virtual Gamepad, and Physical Gamepads
                 await eapi.init(eparams.config);
 
                 if(eparams.embed === 'file') {
-                
-                    // Add Ruffle player to container
                     const rufflePlayer = eapi.getRufflePlayer();
                     if(rufflePlayer) {
                         const container = document.getElementById('gameContainer');
@@ -230,10 +252,7 @@
                         });
                     
                         console.log('API initialized, loading game...');
-                        
-                        // Load game immediately
                         const gamePath = eparams.path;
-                        
                         await eapi.getRufflePlayer().ruffle().load({ url: gamePath });
                         console.log('Game loaded successfully');
                     } else {
@@ -256,16 +275,14 @@
                 } else {
                     console.error("Unsupported embed type:", eparams.embed);
                 }
-                // hide preloader
                 document.getElementById('gamePreloader').style.display = 'none';
             } catch (error) {
                 console.error('Error:', error);
             }
         }
-        // Auto-start when page loads
+        
         window.addEventListener('load', initAndLoadGame);
     </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;0ac733e675244fc3bf80b0ace42197a1&quot;,&quot;r&quot;:1}" crossorigin="anonymous"></script>
-
-
-</body></html>
+    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;0ac733e675244fc3bf80b0ace42197a1&quot;,&quot;r&quot;:1}" crossorigin="anonymous"></script>
+</body>
+</html>
